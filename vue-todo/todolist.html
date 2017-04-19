@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>toDoList Demo</title>
+	<meta charset="utf-8" />
+	<script type="text/javascript" src="./vue.js"></script>
+	<link  href="./font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<style type="text/css">
+		*{
+			margin:0px;
+			padding:0px;
+		}
+		#head{
+			background-color: yellow;
+			line-height: 50px;
+		}
+		#head h2,#main{
+			width:890px;
+			margin:0 auto;
+		}
+		#main{
+			
+			padding:10px;
+		}
+		#addTask,.tips,#task{
+			margin-bottom: 10px;
+			
+		}
+		#addTask{
+			font-size: 20px;
+		}
+		#addTask input{
+			width:100%;
+			font-size: 20px;
+			text-indent:5px;
+			padding:5px 0;
+			margin-top: 10px;
+		}
+		.tips{
+			text-align: right;
+		}
+		.kind {
+			display: inline-block;
+			padding:5px;
+			margin-left:10px;
+			font-size: 18px;
+			color: #000;
+			text-decoration: none;
+		}
+		.kind:hover{
+			outline: 1px solid #989898  ;
+		}
+		.outline{
+			outline: 1px solid #989898 ;
+		}
+		.notFinishTip{
+			float: left;
+			margin-left:0px;
+			font-size: 18px;
+			color:#FA8072;
+		}
+		.noTaskTip{
+			display: block;
+			font-size: 18px;
+			margin-bottom:10px;
+		}
+		#task ul{
+			list-style-type: none;
+		}
+		#task li{
+			border-bottom: 1px solid #989898 ;
+			position: relative;
+		}
+		#task label{
+			display: inline-block;
+			width:700px;
+			font-size: 20px;
+			line-height: 35px;
+			vertical-align: top;
+		}
+		.hidden{
+			width:25px;
+			height:25px;
+			position:absolute;
+			top:0px;
+			left:0px;
+			opacity: 0 ;
+
+		}
+		.close button{			
+			font-size: 20px;
+			height:16px;
+			width:13px;
+			position: absolute;
+			top:0;
+			left:0;
+			opacity: 0 ;	
+		}
+		.delete{
+			text-decoration: line-through;
+			color: 	#A9A9A9;
+		}
+		.check,.close{			
+			display: inline-block;
+			width:30px;
+			height:32px;
+			position:relative;	
+			margin:2px 20px 0 5px;
+
+		}
+		.close{
+			float: right;
+			margin-top: 8px;
+			width:13px;
+			height:16px;
+			visibility: hidden;
+		}
+		#task li:hover .close{
+			visibility: visible;
+		}
+		.taskShow{
+			height:35px;
+		}
+		.editing{
+			width:830px;
+			height:35px;
+			position: absolute;
+			top:0;
+			left:0;
+			margin-left:55px;
+			outline: 1px solid #989898;
+			outline-offset: -1px;
+		}
+		.editing input{
+			text-indent: 5px;
+			font-size: 20px;
+			height:35px;
+			width:100%;
+			border-style: none;	
+			
+		}
+	</style>
+</head>
+<body>
+	<div id="head">
+		<h2>任务计划列表</h2>
+	</div>
+	<div id="main">
+		<div id="addTask">
+			<h3>添加任务</h3>
+			<input  type="text" 
+					name="task" 
+					placeholder="输入任务名称,按下回车键将添加" 
+					@keyup.enter="addTask"
+					v-model="todo" />
+		</div>
+		<div class="tips">
+			<span class="notFinishTip" v-show="list.length">{{notFinishTask}}个任务未完成</span>
+			<a class="kind" href="#all" :class="{outline:locationHash === 'all'}">所有任务</a>
+			<a class="kind" href="#notFinish" :class="{outline:locationHash === 'notFinish'}">未完成任务</a>
+			<a class="kind" href="#finished" :class="{outline:locationHash === 'finished'}">完成任务</a>
+		</div>
+		<div id="task">
+			<span class="noTaskTip" v-show="! list.length">还没有添加任务</span>
+			<ul>
+				<li v-for="item in filterList">
+					<div class="taskShow">
+						<div class="check">
+							<i class="fa fa-check-square-o fa-2x" v-show="item.finish"></i>
+							<i class="fa fa-square-o fa-2x" v-show=" !item.finish"></i>
+							<input type="checkbox" v-model="item.finish" class="hidden"/>	
+						</div>				
+						<label :class="{ delete: item.finish}" @dblclick="editing(item)">
+							{{item.taskName}}
+						</label>
+						<div class="close">
+							<i class="fa fa-close" ></i>
+							<button type="button" @click="deleteTask(item,$event)" class=""></button>
+						</div>
+					</div>
+					<div v-show="editTasking === item" class="editing">
+						<input type="text" 
+							name="edit"
+							v-model="item.taskName" 
+							v-focus = "editTasking === item"
+							@keyup.13="edited(item)"
+							@blur="edited(item)"
+							@keyup.esc="cancel(item)"
+						/>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript" src="./app.js"></script>
+</body>
+</html>
