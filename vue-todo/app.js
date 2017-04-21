@@ -98,7 +98,6 @@ var vm = new Vue({
 
 function watchHashchange(){
 	var hash = window.location.hash.slice(1);
-	console.log(hash);
 	vm.locationHash = hash;
 }
 window.addEventListener('hashchange',watchHashchange);
