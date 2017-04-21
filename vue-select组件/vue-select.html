@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vue 下拉框组件</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="./select.css">
+	<script type="text/javascript" src="./vue.js"></script>
+</head>
+<body>
+<div id="app">
+	<select-part use="搜索" :list="list"></select-part>
+	<div>
+		<select-part use="查询" :list="list2"></select-part>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	var vm = new Vue({
+		el:'#app',
+		data:{
+			list:["html5+css3","html+css","Vue","jq","js"],
+			list2:["睡觉",'吃饭','上课']
+		},
+		components:{
+			'select-part': {
+				props:['use','list'],
+				data:function() {
+					return {showOption:false,
+							val:"",
+							//app:this.list.push('test'),注意在 JavaScript 中对象和数组是引用类型，指向同一个内存空间，如果 prop 是一个对象或数组，在子组件内部改变它会影响父组件的状态。
+					}
+				},
+				template:`<div class="wrap">
+								<div class="select">
+									<div class="select-input">
+										<input type="text" v-model="val"/>
+										<label @click="showOption=!showOption">{{use}}</label>
+									</div>
+									<options v-show="showOption" :list="list" @changeVal="getVal"></options>
+								</div>
+						</div>`,
+				methods:{
+					getVal(item) {
+						console.log("111");
+						this.val = item;
+					}
+				},
+				components:{
+					'options':{
+						props:["list"],
+						template:`<ul class="options">
+									<li v-for="item in list" @click="changeVal(item)">{{item}}</li>
+								 </ul>`,
+						methods:{
+							changeVal(item) {
+								this.$emit("changeVal",item)
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+</script>
+
+</body>
+</html>

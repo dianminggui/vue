@@ -101,6 +101,5 @@ function watchHashchange(){
 	console.log(hash);
 	vm.locationHash = hash;
 }
-
 window.addEventListener('hashchange',watchHashchange);
 
